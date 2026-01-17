@@ -47,7 +47,7 @@
 }
 
 :root {
-  --radius: 0.625rem;
+  --radius: 0.3rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -122,4 +122,9 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.bg-grid-pattern {
+  background-size: 20px 20px;
+  background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
 }
