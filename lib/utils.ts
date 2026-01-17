@@ -27,17 +27,42 @@ export const getVideoMetadata = (
   return new Promise((resolve, reject) => {
     const video = document.createElement("video");
     video.preload = "metadata";
+    // Mute is required for autoplay policies on mobile
+    video.muted = true;
+    // playsInline is required for iOS Safari
+    video.playsInline = true;
+
+    // Timeout to prevent infinite pending on some mobile browsers
+    const timeout = setTimeout(() => {
+      cleanup();
+      reject(new Error("Video metadata loading timeout"));
+    }, 10000);
+
+    const cleanup = () => {
+      clearTimeout(timeout);
+      video.onloadedmetadata = null;
+      video.onerror = null;
+      if (video.src) {
+        window.URL.revokeObjectURL(video.src);
+      }
+    };
+
     video.onloadedmetadata = () => {
-      window.URL.revokeObjectURL(video.src);
+      cleanup();
       resolve({
         duration: video.duration,
         width: video.videoWidth,
         height: video.videoHeight,
       });
     };
+
     video.onerror = () => {
-      reject(new Error("无法解析视频文件"));
+      cleanup();
+      reject(new Error("Unable to parse video file"));
     };
+
     video.src = window.URL.createObjectURL(file);
+    // Explicitly call load() - required for mobile browsers
+    video.load();
   });
 };

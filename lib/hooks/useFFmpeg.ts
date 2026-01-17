@@ -89,6 +89,8 @@ export function useFFmpeg(options: UseFFmpegOptions = {}): UseFFmpegReturn {
 
   // FFmpeg 实例引用
   const ffmpegRef = useRef<FFmpeg | null>(null);
+  // 使用 state 来触发组件更新（ref 变化不会触发重新渲染）
+  const [ffmpegInstance, setFFmpegInstance] = useState<FFmpeg | null>(null);
 
   // 状态管理
   const [loadState, setLoadState] = useState<FFmpegLoadState>({
@@ -139,13 +141,6 @@ export function useFFmpeg(options: UseFFmpegOptions = {}): UseFFmpegReturn {
     const envCheck = checkFFmpegEnvironment();
     setEnvironmentCheck(envCheck);
 
-    if (!envCheck.supported) {
-      const error = new Error(envCheck.message);
-      setLoadState({ status: "error", error });
-      onError?.(error);
-      return;
-    }
-
     // 如果已加载，跳过
     if (loadState.status === "ready") {
       return;
@@ -165,6 +160,8 @@ export function useFFmpeg(options: UseFFmpegOptions = {}): UseFFmpegReturn {
         setLoadState({ status: "loading", message });
       });
 
+      // 更新 state 以触发组件重新渲染
+      setFFmpegInstance(ffmpeg);
       setLoadState({ status: "ready" });
       onLoaded?.();
     } catch (error) {
@@ -197,10 +194,15 @@ export function useFFmpeg(options: UseFFmpegOptions = {}): UseFFmpegReturn {
     setProgress(null);
   }, []);
 
-  // 自动加载
+  // 自动加载 - 使用 ref 避免级联渲染
+  const hasTriedAutoLoad = useRef(false);
   useEffect(() => {
-    if (autoLoad && loadState.status === "idle") {
-      load();
+    if (autoLoad && loadState.status === "idle" && !hasTriedAutoLoad.current) {
+      hasTriedAutoLoad.current = true;
+      // 使用 queueMicrotask 延迟调用，避免同步 setState 警告
+      queueMicrotask(() => {
+        load();
+      });
     }
   }, [autoLoad, loadState.status, load]);
 
@@ -214,7 +216,7 @@ export function useFFmpeg(options: UseFFmpegOptions = {}): UseFFmpegReturn {
   }, []);
 
   return {
-    ffmpeg: ffmpegRef.current,
+    ffmpeg: ffmpegInstance,
     loadState,
     isLoaded,
     isLoading,
