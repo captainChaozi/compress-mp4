@@ -51,7 +51,7 @@ interface ProcessResult {
 }
 
 /**
- * 计算视频码率 (kbps)
+ * Calculate video bitrate (kbps)
  */
 function calculateBitrate(fileSize: number, duration: number): number {
   if (duration <= 0) return 0;
@@ -59,7 +59,7 @@ function calculateBitrate(fileSize: number, duration: number): number {
 }
 
 /**
- * 检查视频是否已高度压缩 (分辨率感知版)
+ * Check if video is already highly compressed (resolution aware)
  */
 function isHighlyCompressed(
   fileSize: number,
@@ -72,7 +72,7 @@ function isHighlyCompressed(
   const bitrateKbps = calculateBitrate(fileSize, duration);
   const pixels = width * height;
 
-  // 估算 BPP (假设 30 fps)
+  // Estimate BPP (assuming 30 fps)
   // BPP = (bitrate_bps) / (width * height * fps)
   const estimatedBPP = (bitrateKbps * 1000) / (pixels * 30);
 
@@ -104,7 +104,7 @@ export default function VideoCompressor() {
   );
   const [exportName, setExportName] = useState<string>("");
 
-  // 压缩会话管理:每次压缩生成唯一ID,确保进度数据隔离
+  // Compression session management: Generate unique ID for each compression to ensure progress data isolation
   const [compressionSessionId, setCompressionSessionId] = useState<
     string | null
   >(null);
@@ -114,20 +114,20 @@ export default function VideoCompressor() {
 
   // --- Effects ---
 
-  // 计算当前进度(使用 useMemo 避免在 effect 中设置 state)
+  // Calculate current progress (use useMemo to avoid setting state in effect)
   const currentProgress = useMemo(() => {
-    // 严格检查:必须在压缩状态且有有效会话
+    // Strict check: Must be in compressing state and have a valid session
     if (status !== "compressing" || !compressionSessionId || !ffmpegProgress) {
       return 0;
     }
 
-    // 优先使用 progress 字段 (0-1 范围)
+    // Prioritize progress field (range 0-1)
     if (ffmpegProgress.progress > 0 && ffmpegProgress.progress <= 1) {
       const progressPercent = Math.round(ffmpegProgress.progress * 100);
-      return Math.min(99, progressPercent); // 限制最大99%
+      return Math.min(99, progressPercent); // Limit max to 99%
     }
 
-    // 回退:基于时间估算进度
+    // Fallback: Estimate progress based on time
     if (ffmpegProgress.time > 0 && video?.meta.duration) {
       const estimated = Math.round(
         (ffmpegProgress.time / video.meta.duration) * 100,
@@ -138,7 +138,7 @@ export default function VideoCompressor() {
     return 0;
   }, [status, compressionSessionId, ffmpegProgress, video]);
 
-  // 计时器:更新已用时间
+  // Timer: Update elapsed time
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (status === "compressing") {
@@ -159,14 +159,16 @@ export default function VideoCompressor() {
     setErrorMsg("");
     setResult(null);
     setPreviewMode("original");
-    setElapsedTime(0); // 重置已用时间
+    setElapsedTime(0); // Reset elapsed time
 
     // Validation (Type)
     if (
       !file.type.startsWith("video/") &&
       !file.name.match(/\.(mp4|mov|mkv|webm|avi)$/i)
     ) {
-      setErrorMsg("不支持的文件格式，请选择视频文件 (MP4, MOV, MKV, 等)");
+      setErrorMsg(
+        "Unsupported file format. Please select a video file (MP4, MOV, MKV, etc.)",
+      );
       setStatus("error");
       return;
     }
@@ -177,7 +179,9 @@ export default function VideoCompressor() {
       setExportName(file.name.replace(/\.[^/.]+$/, "") + "-compressed.mp4");
       setStatus("ready");
     } catch (err) {
-      setErrorMsg("无法读取视频信息，文件可能已损坏");
+      setErrorMsg(
+        "Unable to read video information. The file may be corrupted.",
+      );
       setStatus("error");
     }
   };
@@ -206,15 +210,15 @@ export default function VideoCompressor() {
   const startCompression = async () => {
     if (!video || !ffmpeg || !isLoaded) return;
 
-    // 生成新的压缩会话ID
+    // Generate new compression session ID
     const sessionId = `compression-${Date.now()}-${Math.random()}`;
     setCompressionSessionId(sessionId);
 
-    // 严格清理所有状态
-    clearProgress(); // 清理 FFmpeg 进度
+    // Strictly clear all states
+    clearProgress(); // Clear FFmpeg progress
 
-    setElapsedTime(0); // 重置已用时间
-    startTimeRef.current = Date.now(); // 记录开始时间
+    setElapsedTime(0); // Reset elapsed time
+    startTimeRef.current = Date.now(); // Record start time
     setStatus("compressing");
 
     try {
@@ -226,30 +230,30 @@ export default function VideoCompressor() {
       const originalSize = video.file.size; // in bytes
 
       /**
-       * 目标体积控制原理：
-       * 1. 计算目标总大小 (bits) = 原始大小 * 8 * 比例
-       * 2. 计算目标总码率 (bps) = 目标总大小 / 时长
-       * 3. 分配给视频的码率 = 总码率 * 0.9 (预留 10% 给音频和封装开销)
+       * Target size control principle:
+       * 1. Calculate target total size (bits) = original size * 8 * ratio
+       * 2. Calculate target total bitrate (bps) = target total size / duration
+       * 3. Allocate to video bitrate = total bitrate * 0.9 (Reserve 10% for audio and container overhead)
        */
       const targetTotalBitrateBps =
         (originalSize * 8 * (ratio / 100)) / duration;
       const videoBitrateKbps = Math.floor((targetTotalBitrateBps * 0.9) / 1000);
 
       /**
-       * 动态码率上限策略:根据视频时长调整最大允许码率
-       * - 短视频(≤30秒): 允许高码率以精确控制体积
-       * - 中等视频(≤2分钟): 中等码率平衡质量和性能
-       * - 长视频(≤5分钟): 限制码率保证性能
-       * - 超长视频(>5分钟): 严格限制避免浏览器卡顿
+       * Dynamic bitrate cap strategy: Adjust max allowed bitrate based on video duration
+       * - Short video (<=30s): Allow high bitrate for precise size control
+       * - Medium video (<=2m): Medium bitrate to balance quality and performance
+       * - Long video (<=5m): Limit bitrate to ensure performance
+       * - Ultra-long video (>5m): Strictly limit to avoid browser lag
        */
       const getMaxBitrate = (duration: number): number => {
-        if (duration <= 30) return 30000; // 30秒内: 30 Mbps
-        if (duration <= 120) return 20000; // 2分钟内: 20 Mbps
-        if (duration <= 300) return 10000; // 5分钟内: 10 Mbps
-        return 5000; // 长视频: 5 Mbps
+        if (duration <= 30) return 30000; // Within 30 seconds: 30 Mbps
+        if (duration <= 120) return 20000; // Within 2 minutes: 20 Mbps
+        if (duration <= 300) return 10000; // Within 5 minutes: 10 Mbps
+        return 5000; // Long video: 5 Mbps
       };
 
-      // 兜底:码率不能太低(至少 100kbps),上限根据时长动态调整
+      // Fallback: Bitrate cannot be too low (at least 100kbps), upper limit dynamically adjusted based on duration
       const maxBitrate = getMaxBitrate(duration);
       const finalBitrate = Math.max(
         100,
@@ -316,7 +320,7 @@ export default function VideoCompressor() {
       });
       const blobUrl = URL.createObjectURL(blob);
 
-      // 直接计算最终耗时,避免使用异步状态
+      // Directly calculate final time cost to avoid async state issues
       const finalTimeCost = (Date.now() - startTimeRef.current) / 1000;
 
       setResult({
@@ -326,17 +330,19 @@ export default function VideoCompressor() {
         timeCost: finalTimeCost,
       });
 
-      // 压缩成功:清理会话和进度数据
+      // Compression success: Clear session and progress data
       setCompressionSessionId(null);
       clearProgress();
       setStatus("success");
       setPreviewMode("compressed"); // Auto switch to result
     } catch (err) {
       console.error(err);
-      // 压缩失败:清理会话和进度数据
+      // Compression failed: Clear session and progress data
       setCompressionSessionId(null);
       clearProgress();
-      setErrorMsg("压缩过程中发生错误,请重试或尝试其他文件");
+      setErrorMsg(
+        "An error occurred during compression. Please try again or use another file.",
+      );
       setStatus("error");
     }
   };
@@ -352,8 +358,8 @@ export default function VideoCompressor() {
   };
 
   /**
-   * 获取当前进度百分比
-   * 严格策略:只在压缩状态且有有效会话时返回进度,其他情况一律返回0
+   * Get current progress percentage
+   * Strict strategy: Only return progress when in compressing state and valid session exists, otherwise return 0
    */
   const formatProgress = () => currentProgress;
 
@@ -364,8 +370,10 @@ export default function VideoCompressor() {
       <div className="flex h-[50vh] flex-col items-center justify-center gap-4 text-center">
         <Loader2 className="h-10 w-10 animate-spin text-orange-600" />
         <div className="space-y-1">
-          <h2 className="text-lg font-medium">正在初始化引擎...</h2>
-          <p className="text-sm text-zinc-500">第一次加载可能需要几秒钟</p>
+          <h2 className="text-lg font-medium">Initializing engine...</h2>
+          <p className="text-sm text-zinc-500">
+            First load may take a few seconds
+          </p>
         </div>
       </div>
     );
@@ -376,8 +384,9 @@ export default function VideoCompressor() {
       <Alert variant="destructive" className="max-w-md mx-auto mt-10">
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
-          核心组件加载失败。您的浏览器可能不支持 WebAssembly 或
-          SharedArrayBuffer。请使用最新版 Chrome/Edge/Firefox 重试。
+          Core component load failed. Your browser may not support WebAssembly
+          or SharedArrayBuffer. Please retry with the latest version of
+          Chrome/Edge/Firefox.
         </AlertDescription>
       </Alert>
     );
@@ -404,9 +413,10 @@ export default function VideoCompressor() {
               <div className="h-20 w-20 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-6 ring-1 ring-zinc-200 dark:ring-zinc-700">
                 <Upload className="h-10 w-10 text-zinc-400" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">选择视频文件</h3>
+              <h3 className="text-xl font-semibold mb-2">Select Video File</h3>
               <p className="text-zinc-500 text-sm mb-8 max-w-xs">
-                支持 MP4, MOV, MKV. 所有处理在本地完成，文件不会离开您的设备。
+                Supports MP4, MOV, MKV. All processing is done locally, files
+                never leave your device.
               </p>
               <div className="relative">
                 <input
@@ -420,7 +430,7 @@ export default function VideoCompressor() {
                   className="bg-orange-600 hover:bg-orange-700 text-white font-medium px-8 transition-transform hover:scale-105 active:scale-95"
                 >
                   <FileVideo className="mr-2 h-5 w-5" />
-                  浏览文件
+                  Browse File
                 </Button>
               </div>
             </div>
@@ -471,14 +481,14 @@ export default function VideoCompressor() {
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
                       <Label className="uppercase tracking-wider text-xs font-semibold text-zinc-500">
-                        目标文件大小
+                        Target File Size
                       </Label>
                       <div className="flex flex-col items-end">
                         <span className="font-mono text-xl font-bold text-orange-600">
                           {ratio}%
                         </span>
                         <span className="text-[10px] text-zinc-400 font-mono">
-                          约 {formatBytes(video.file.size * (ratio / 100))}
+                          Approx {formatBytes(video.file.size * (ratio / 100))}
                         </span>
                       </div>
                     </div>
@@ -509,7 +519,7 @@ export default function VideoCompressor() {
                     </div>
                   </div>
 
-                  {/* 低码率警告 */}
+                  {/* Low bitrate warning */}
                   {isHighlyCompressed(
                     video.file.size,
                     video.meta.duration,
@@ -519,7 +529,7 @@ export default function VideoCompressor() {
                     <Alert className="border-amber-200 bg-amber-50 dark:border-amber-900 dark:bg-amber-950/30">
                       <Info className="h-4 w-4 text-amber-600" />
                       <AlertTitle className="text-amber-800 dark:text-amber-200">
-                        该视频已高度压缩
+                        Video Already Highly Compressed
                       </AlertTitle>
                       <AlertDescription className="text-amber-700 dark:text-amber-300 text-sm">
                         检测到视频码率仅为{" "}
@@ -532,7 +542,8 @@ export default function VideoCompressor() {
                           )}{" "}
                           kbps
                         </span>
-                        ，已低于常规标准。进一步压缩可能导致文件体积反而增大或画质严重下降。
+                        , which is below standard. Further compression may
+                        increase file size or severely degrade quality.
                       </AlertDescription>
                     </Alert>
                   )}
@@ -544,7 +555,7 @@ export default function VideoCompressor() {
                     size="lg"
                     className="w-full bg-orange-600 hover:bg-orange-700 text-white h-12 text-lg shadow-lg shadow-orange-600/20"
                   >
-                    开始压缩
+                    Start Compression
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </div>
@@ -576,7 +587,9 @@ export default function VideoCompressor() {
                   </div>
 
                   <div className="text-center space-y-1">
-                    <h3 className="font-medium animate-pulse">正在压缩...</h3>
+                    <h3 className="font-medium animate-pulse">
+                      Compressing...
+                    </h3>
                     <p className="text-zinc-500 font-mono text-sm">
                       {formatTime(elapsedTime)} elapsed
                     </p>
@@ -587,7 +600,7 @@ export default function VideoCompressor() {
                     onClick={cancelCompression}
                     className="mt-4 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
                   >
-                    取消任务
+                    Cancel Task
                   </Button>
                 </div>
               )}
@@ -616,7 +629,7 @@ export default function VideoCompressor() {
                         className="h-7 text-xs text-white hover:bg-white/20 hover:text-white"
                         onClick={() => setPreviewMode("original")}
                       >
-                        原始视频
+                        Original Video
                       </Button>
                       <Button
                         size="sm"
@@ -626,7 +639,7 @@ export default function VideoCompressor() {
                         className="h-7 text-xs text-white hover:bg-white/20 hover:text-white"
                         onClick={() => setPreviewMode("compressed")}
                       >
-                        压缩结果
+                        Compressed Result
                       </Button>
                     </div>
                   </div>
@@ -635,7 +648,7 @@ export default function VideoCompressor() {
                   <div className="grid grid-cols-3 divide-x divide-zinc-200 dark:divide-zinc-800 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
                     <div className="p-4 text-center">
                       <p className="text-xs text-zinc-500 uppercase tracking-wider mb-1">
-                        原始大小
+                        Original Size
                       </p>
                       <p className="font-mono font-medium">
                         {formatBytes(video.file.size)}
@@ -643,7 +656,7 @@ export default function VideoCompressor() {
                     </div>
                     <div className="p-4 text-center">
                       <p className="text-xs text-zinc-500 uppercase tracking-wider mb-1">
-                        压缩后
+                        Compressed
                       </p>
                       <p
                         className={cn(
@@ -658,7 +671,7 @@ export default function VideoCompressor() {
                     </div>
                     <div className="p-4 text-center">
                       <p className="text-xs text-zinc-500 uppercase tracking-wider mb-1">
-                        压缩率
+                        Compression Ratio
                       </p>
                       <p className="font-mono font-medium">
                         {Math.round((result.size / video.file.size) * 100)}%
@@ -666,16 +679,19 @@ export default function VideoCompressor() {
                     </div>
                   </div>
 
-                  {/* 文件膨胀警告 */}
+                  {/* File size increase warning */}
                   {result.size > video.file.size && (
                     <Alert
                       variant="destructive"
                       className="mx-6 mt-4 border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/30"
                     >
                       <AlertCircle className="h-4 w-4" />
-                      <AlertTitle>压缩后文件体积增大</AlertTitle>
+                      <AlertTitle>
+                        File Size Increased After Compression
+                      </AlertTitle>
                       <AlertDescription className="text-sm">
-                        原视频已采用高效编码，重新压缩反而导致体积增大{" "}
+                        The original video is already efficiently encoded.
+                        Re-compression caused the file size to increase by{" "}
                         <span className="font-mono font-medium">
                           {Math.round(
                             ((result.size - video.file.size) /
@@ -684,7 +700,9 @@ export default function VideoCompressor() {
                           )}
                           %
                         </span>
-                        。建议直接使用原文件，或尝试降低压缩比率（使用更低的质量目标）。
+                        %. It is recommended to use the original file or try
+                        lowering the compression ratio (use a lower quality
+                        target).
                       </AlertDescription>
                     </Alert>
                   )}
@@ -692,7 +710,7 @@ export default function VideoCompressor() {
                   {/* Export Actions */}
                   <div className="p-6 space-y-4">
                     <div className="space-y-2">
-                      <Label>导出文件名</Label>
+                      <Label>Export Filename</Label>
                       <div className="flex gap-2">
                         <Input
                           value={exportName}
@@ -706,7 +724,7 @@ export default function VideoCompressor() {
                         variant="outline"
                         className="flex-1"
                         onClick={() => {
-                          // 彻底清理所有状态
+                          // Thoroughly clear all states
                           setCompressionSessionId(null);
                           clearProgress();
                           setResult(null);
@@ -715,14 +733,14 @@ export default function VideoCompressor() {
                         }}
                       >
                         <RefreshCcw className="mr-2 h-4 w-4" />
-                        重新压缩
+                        Compress Again
                       </Button>
                       <Button
                         className="flex-[2] bg-emerald-600 hover:bg-emerald-700 text-white"
                         onClick={handleDownload}
                       >
                         <Download className="mr-2 h-4 w-4" />
-                        保存视频
+                        Save Video
                       </Button>
                     </div>
                   </div>
@@ -734,12 +752,12 @@ export default function VideoCompressor() {
                 <div className="p-6">
                   <Alert variant="destructive">
                     <AlertCircle className="h-4 w-4" />
-                    <AlertTitle>处理失败</AlertTitle>
+                    <AlertTitle>Processing Failed</AlertTitle>
                     <AlertDescription>{errorMsg}</AlertDescription>
                   </Alert>
                   <div className="mt-4 flex justify-end">
                     <Button onClick={() => setStatus("idle")}>
-                      重新选择文件
+                      Select New File
                     </Button>
                   </div>
                 </div>
