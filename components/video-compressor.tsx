@@ -388,446 +388,420 @@ export default function VideoCompressor() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 font-sans relative overflow-x-hidden selection:bg-orange-500/30">
-      {/* Background Grid */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
+    <div>
+      {/* Main Card */}
+      <Card className="border-0 shadow-2xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl ring-1 ring-zinc-200 dark:ring-zinc-800 overflow-hidden relative">
+        {/* Top Bar Decoration */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-orange-600 to-transparent opacity-50" />
 
-      <div className="w-full max-w-5xl mx-auto space-y-12 py-12 px-4 relative z-10 animate-in fade-in duration-700 slide-in-from-bottom-4">
-        {/* Header */}
-        <header className="flex flex-col items-center justify-center space-y-3 mb-8">
-          <div className="max-w-xl text-center space-y-3">
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-              Compress MP4 Files Instantly
-            </h1>
-            <p className="text-lg text-zinc-600 dark:text-zinc-300">
-              Free online tool to <strong>compress MP4</strong> videos directly
-              in your browser. Reduce file size without uploading — 100%{" "}
-              <em>offline</em> & private.
-            </p>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              No signup required. Works offline after page loads.
-            </p>
-          </div>
-        </header>
+        <CardContent className="p-0">
+          {/* S0: Empty State */}
+          {status === "idle" && (
+            <div className="flex flex-col items-center justify-center py-24 px-4 text-center group cursor-pointer relative border-y border-transparent hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-colors">
+              {/* Clickable Area Overlay */}
+              <input
+                type="file"
+                accept="video/*,.mp4,.mov,.mkv,.webm,.avi"
+                onChange={handleFileSelect}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-50"
+              />
 
-        {/* Main Card */}
-        <Card className="border-0 shadow-2xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl ring-1 ring-zinc-200 dark:ring-zinc-800 overflow-hidden relative">
-          {/* Top Bar Decoration */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-orange-600 to-transparent opacity-50" />
+              {/* Corner Ticks */}
+              <div className="absolute top-4 left-4 w-4 h-4 border-t-2 border-l-2 border-zinc-300 dark:border-zinc-700 group-hover:border-orange-500 transition-colors" />
+              <div className="absolute top-4 right-4 w-4 h-4 border-t-2 border-r-2 border-zinc-300 dark:border-zinc-700 group-hover:border-orange-500 transition-colors" />
+              <div className="absolute bottom-4 left-4 w-4 h-4 border-b-2 border-l-2 border-zinc-300 dark:border-zinc-700 group-hover:border-orange-500 transition-colors" />
+              <div className="absolute bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-zinc-300 dark:border-zinc-700 group-hover:border-orange-500 transition-colors" />
 
-          <CardContent className="p-0">
-            {/* S0: Empty State */}
-            {status === "idle" && (
-              <div className="flex flex-col items-center justify-center py-24 px-4 text-center group cursor-pointer relative border-y border-transparent hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-colors">
-                {/* Clickable Area Overlay */}
-                <input
-                  type="file"
-                  accept="video/*,.mp4,.mov,.mkv,.webm,.avi"
-                  onChange={handleFileSelect}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-50"
-                />
-
-                {/* Corner Ticks */}
-                <div className="absolute top-4 left-4 w-4 h-4 border-t-2 border-l-2 border-zinc-300 dark:border-zinc-700 group-hover:border-orange-500 transition-colors" />
-                <div className="absolute top-4 right-4 w-4 h-4 border-t-2 border-r-2 border-zinc-300 dark:border-zinc-700 group-hover:border-orange-500 transition-colors" />
-                <div className="absolute bottom-4 left-4 w-4 h-4 border-b-2 border-l-2 border-zinc-300 dark:border-zinc-700 group-hover:border-orange-500 transition-colors" />
-                <div className="absolute bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-zinc-300 dark:border-zinc-700 group-hover:border-orange-500 transition-colors" />
-
-                <div className="h-24 w-24 bg-zinc-100 dark:bg-zinc-800/50 rounded-sm flex items-center justify-center mb-6 ring-1 ring-zinc-200 dark:ring-zinc-700 group-hover:scale-110 transition-transform duration-500">
-                  <Upload className="h-10 w-10 text-zinc-400 group-hover:text-orange-600 transition-colors" />
-                </div>
-                <h3 className="text-2xl font-bold tracking-tight mb-2 text-zinc-900 dark:text-zinc-100">
-                  DROP VIDEO FILE
-                </h3>
-                <p className="text-zinc-500 text-sm mb-8 max-w-xs font-mono uppercase tracking-wide">
-                  OR CLICK TO BROWSE <br />
-                  <span className="text-xs opacity-50 lowercase normal-case font-sans block mt-2">
-                    MP4, MOV, MKV Supported
-                  </span>
-                </p>
-
-                <Button
-                  size="lg"
-                  className="bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 hover:bg-orange-600 dark:hover:bg-orange-600 hover:text-white dark:hover:text-white rounded-sm font-bold uppercase tracking-widest transition-all relative z-10"
-                >
-                  <FileVideo className="mr-2 h-4 w-4" />
-                  Select File
-                </Button>
+              <div className="h-24 w-24 bg-zinc-100 dark:bg-zinc-800/50 rounded-sm flex items-center justify-center mb-6 ring-1 ring-zinc-200 dark:ring-zinc-700 group-hover:scale-110 transition-transform duration-500">
+                <Upload className="h-10 w-10 text-zinc-400 group-hover:text-orange-600 transition-colors" />
               </div>
-            )}
+              <p className="text-2xl font-bold tracking-tight mb-2 text-zinc-900 dark:text-zinc-100">
+                DROP VIDEO FILE
+              </p>
+              <p className="text-zinc-500 text-sm mb-8 max-w-xs font-mono uppercase tracking-wide">
+                OR CLICK TO BROWSE <br />
+                <span className="text-xs opacity-50 lowercase normal-case font-sans block mt-2">
+                  MP4, MOV, MKV Supported
+                </span>
+              </p>
 
-            {/* S1 & S2 & S4: Workspace */}
-            {status !== "idle" && video && (
-              <div className="flex flex-col">
-                {/* File Info Bar */}
-                <div className="bg-zinc-100/50 dark:bg-zinc-950/30 border-b border-zinc-200 dark:border-zinc-800 p-6 flex items-start justify-between gap-4">
-                  <div className="flex items-start gap-4 overflow-hidden">
-                    <div className="h-12 w-12 bg-white dark:bg-zinc-900 rounded-[2px] flex items-center justify-center shrink-0 border-2 border-zinc-200 dark:border-zinc-800">
-                      <FileVideo className="h-6 w-6 text-zinc-900 dark:text-zinc-100" />
-                    </div>
-                    <div className="min-w-0 space-y-1">
-                      <p
-                        className="font-bold text-lg truncate max-w-[200px] sm:max-w-md text-zinc-900 dark:text-zinc-50"
-                        title={video.file.name}
-                      >
-                        {video.file.name}
-                      </p>
-                      <div className="flex items-center gap-3 text-xs font-mono text-zinc-500 uppercase tracking-tight">
-                        <span className="bg-zinc-200 dark:bg-zinc-800 px-1.5 py-0.5 rounded-[2px] text-zinc-700 dark:text-zinc-300">
-                          {formatBytes(video.file.size)}
-                        </span>
-                        <span>|</span>
-                        <span>
-                          {video.meta.width}x{video.meta.height}
-                        </span>
-                        <span>|</span>
-                        <span>{formatTime(video.meta.duration)}</span>
-                      </div>
+              <Button
+                size="lg"
+                className="bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 hover:bg-orange-600 dark:hover:bg-orange-600 hover:text-white dark:hover:text-white rounded-sm font-bold uppercase tracking-widest transition-all relative z-10"
+              >
+                <FileVideo className="mr-2 h-4 w-4" />
+                Select File
+              </Button>
+            </div>
+          )}
+
+          {/* S1 & S2 & S4: Workspace */}
+          {status !== "idle" && video && (
+            <div className="flex flex-col">
+              {/* File Info Bar */}
+              <div className="bg-zinc-100/50 dark:bg-zinc-950/30 border-b border-zinc-200 dark:border-zinc-800 p-6 flex items-start justify-between gap-4">
+                <div className="flex items-start gap-4 overflow-hidden">
+                  <div className="h-12 w-12 bg-white dark:bg-zinc-900 rounded-[2px] flex items-center justify-center shrink-0 border-2 border-zinc-200 dark:border-zinc-800">
+                    <FileVideo className="h-6 w-6 text-zinc-900 dark:text-zinc-100" />
+                  </div>
+                  <div className="min-w-0 space-y-1">
+                    <p
+                      className="font-bold text-lg truncate max-w-[200px] sm:max-w-md text-zinc-900 dark:text-zinc-50"
+                      title={video.file.name}
+                    >
+                      {video.file.name}
+                    </p>
+                    <div className="flex items-center gap-3 text-xs font-mono text-zinc-500 uppercase tracking-tight">
+                      <span className="bg-zinc-200 dark:bg-zinc-800 px-1.5 py-0.5 rounded-[2px] text-zinc-700 dark:text-zinc-300">
+                        {formatBytes(video.file.size)}
+                      </span>
+                      <span>|</span>
+                      <span>
+                        {video.meta.width}x{video.meta.height}
+                      </span>
+                      <span>|</span>
+                      <span>{formatTime(video.meta.duration)}</span>
                     </div>
                   </div>
-                  {status !== "compressing" && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="rounded-[2px] hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-500 w-8 h-8"
-                      onClick={() => {
-                        setStatus("idle");
-                        setVideo(null);
-                      }}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  )}
                 </div>
-
-                {/* S1: Settings */}
-                {status === "ready" && (
-                  <div className="p-8 space-y-8 animate-in slide-in-from-bottom-5 duration-300">
-                    {/* Dashboard Grid */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="border border-zinc-200 dark:border-zinc-800 p-4 rounded-[2px] bg-zinc-50/50 dark:bg-zinc-900/50">
-                        <Label className="text-[10px] uppercase tracking-widest text-zinc-500 font-mono block mb-2">
-                          Original Size
-                        </Label>
-                        <div className="font-mono text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-                          {formatBytes(video.file.size)}
-                        </div>
-                      </div>
-                      <div className="border border-zinc-200 dark:border-zinc-800 p-4 rounded-[2px] bg-indigo-50/30 dark:bg-indigo-950/10">
-                        <Label className="text-[10px] uppercase tracking-widest text-indigo-500/80 font-mono block mb-2">
-                          Est. Output
-                        </Label>
-                        <div className="font-mono text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-                          ~{formatBytes(video.file.size * (ratio / 100))}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-6">
-                      <div className="flex justify-between items-end">
-                        <Label className="uppercase tracking-widest text-xs font-bold text-zinc-700 dark:text-zinc-300">
-                          Compression Level
-                        </Label>
-                        <span className="font-mono text-4xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tighter">
-                          {ratio}
-                          <span className="text-lg text-zinc-400 align-top ml-1">
-                            %
-                          </span>
-                        </span>
-                      </div>
-
-                      <Slider
-                        value={[ratio]}
-                        onValueChange={(v) => setRatio(v[0])}
-                        min={1}
-                        max={100}
-                        step={1}
-                        className="py-2 cursor-col-resize"
-                      />
-
-                      <div className="grid grid-cols-4 gap-2">
-                        {[30, 50, 70, 90].map((p) => (
-                          <Button
-                            key={p}
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setRatio(p)}
-                            className={cn(
-                              "font-mono text-xs h-9 border-2 rounded-[2px] transition-all",
-                              ratio === p
-                                ? "border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900"
-                                : "border-zinc-200 text-zinc-500 hover:border-zinc-300 hover:text-zinc-900 dark:border-zinc-800 dark:hover:border-zinc-700",
-                            )}
-                          >
-                            {p}%
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Low bitrate warning */}
-                    {isHighlyCompressed(
-                      video.file.size,
-                      video.meta.duration,
-                      video.meta.width,
-                      video.meta.height,
-                    ) && (
-                      <Alert className="rounded-[2px] border-amber-500/50 bg-amber-50 dark:bg-amber-950/10 text-amber-900 dark:text-amber-100">
-                        <Info className="h-4 w-4 text-amber-600" />
-                        <AlertTitle className="font-bold uppercase tracking-wide text-xs mb-1">
-                          Warning: Low Bitrate
-                        </AlertTitle>
-                        <AlertDescription className="text-xs font-mono opacity-90">
-                          Video bitrate is already low (
-                          {Math.round(
-                            calculateBitrate(
-                              video.file.size,
-                              video.meta.duration,
-                            ),
-                          )}{" "}
-                          kbps). Quality loss may occur.
-                        </AlertDescription>
-                      </Alert>
-                    )}
-
-                    <Separator className="bg-zinc-100 dark:bg-zinc-800" />
-
-                    <Button
-                      onClick={startCompression}
-                      size="lg"
-                      className="w-full bg-orange-600 hover:bg-orange-700 text-white h-14 text-lg font-bold uppercase tracking-widest rounded-[2px] shadow-lg shadow-orange-900/10 hover:shadow-orange-600/20 active:translate-y-0.5 transition-all"
-                    >
-                      Initialize Compression
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </Button>
-                  </div>
+                {status !== "compressing" && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="rounded-[2px] hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-500 w-8 h-8"
+                    onClick={() => {
+                      setStatus("idle");
+                      setVideo(null);
+                    }}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
                 )}
+              </div>
 
-                {/* S2: Loading */}
-                {status === "compressing" && (
-                  <div className="p-12 flex flex-col items-center justify-center space-y-8 animate-in fade-in">
-                    <div className="w-full space-y-2">
-                      <div className="flex justify-between text-xs uppercase tracking-widest font-mono text-zinc-500">
-                        <span>Processing Status</span>
-                        <span>{formatProgress()}%</span>
-                      </div>
-                      <div className="h-4 w-full bg-zinc-100 dark:bg-zinc-800 rounded-[1px] overflow-hidden relative border border-zinc-200 dark:border-zinc-700">
-                        {/* Progress Bar */}
-                        <div
-                          className="h-full bg-orange-600 transition-all duration-300 ease-out relative"
-                          style={{ width: `${formatProgress()}%` }}
-                        >
-                          <div className="absolute right-0 top-0 bottom-0 w-[1px] bg-white/50" />
-                        </div>
-                      </div>
-                      <div className="flex justify-between text-xs font-mono text-zinc-400">
-                        <span>Mode: ULTRAFAST</span>
-                        <span>Time: {formatTime(elapsedTime)}</span>
+              {/* S1: Settings */}
+              {status === "ready" && (
+                <div className="p-8 space-y-8 animate-in slide-in-from-bottom-5 duration-300">
+                  {/* Dashboard Grid */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="border border-zinc-200 dark:border-zinc-800 p-4 rounded-[2px] bg-zinc-50/50 dark:bg-zinc-900/50">
+                      <Label className="text-[10px] uppercase tracking-widest text-zinc-500 font-mono block mb-2">
+                        Original Size
+                      </Label>
+                      <div className="font-mono text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+                        {formatBytes(video.file.size)}
                       </div>
                     </div>
-
-                    <div className="text-center space-y-1">
-                      <h3 className="font-bold uppercase tracking-widest animate-pulse text-zinc-900 dark:text-zinc-100">
-                        Compression in Progress...
-                      </h3>
-                      <p className="text-zinc-500 font-mono text-xs">
-                        Please do not close this tab
-                      </p>
+                    <div className="border border-zinc-200 dark:border-zinc-800 p-4 rounded-[2px] bg-indigo-50/30 dark:bg-indigo-950/10">
+                      <Label className="text-[10px] uppercase tracking-widest text-indigo-500/80 font-mono block mb-2">
+                        Est. Output
+                      </Label>
+                      <div className="font-mono text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                        ~{formatBytes(video.file.size * (ratio / 100))}
+                      </div>
                     </div>
-
-                    <Button
-                      variant="outline"
-                      onClick={cancelCompression}
-                      className="mt-4 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 dark:border-red-900/50 dark:hover:bg-red-900/30 dark:hover:border-red-800 rounded-[2px] uppercase text-xs tracking-widest h-8"
-                    >
-                      Abort Operation
-                    </Button>
                   </div>
-                )}
 
-                {/* S4: Success / Result */}
-                {status === "success" && result && (
-                  <div className="animate-in fade-in slide-in-from-bottom-5 p-0">
-                    {/* Header */}
-                    <div className="bg-emerald-50 dark:bg-emerald-950/20 border-b border-emerald-100 dark:border-emerald-900/50 p-4 text-center">
-                      <div className="inline-flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold uppercase tracking-widest text-sm">
-                        <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                        Compression Complete
-                      </div>
-                    </div>
-
-                    {/* Preview Area */}
-                    <div className="aspect-video bg-zinc-950 relative group border-b border-zinc-800">
-                      <video
-                        key={previewMode} // force reload
-                        controls
-                        className="w-full h-full"
-                        src={
-                          previewMode === "original"
-                            ? URL.createObjectURL(video.file)
-                            : result.blobUrl
-                        }
-                      />
-                      {/* Toggle Switch */}
-                      <div className="absolute top-4 right-4 bg-black/80 backdrop-blur-md p-1 rounded-[2px] border border-white/10 flex gap-1 transform transition-transform z-20">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className={cn(
-                            "h-7 text-[10px] uppercase tracking-wide rounded-[1px]",
-                            previewMode === "original"
-                              ? "bg-white text-black"
-                              : "text-zinc-400 hover:text-white",
-                          )}
-                          onClick={() => setPreviewMode("original")}
-                        >
-                          Original
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className={cn(
-                            "h-7 text-[10px] uppercase tracking-wide rounded-[1px]",
-                            previewMode === "compressed"
-                              ? "bg-emerald-500 text-white"
-                              : "text-zinc-400 hover:text-white",
-                          )}
-                          onClick={() => setPreviewMode("compressed")}
-                        >
-                          Result
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Stats Bar */}
-                    <div className="grid grid-cols-3 divide-x divide-zinc-200 dark:divide-zinc-800 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50">
-                      <div className="p-6 text-center space-y-1">
-                        <p className="text-[10px] text-zinc-500 uppercase tracking-widest">
-                          Original Size
-                        </p>
-                        <p className="font-mono font-medium text-lg text-zinc-700 dark:text-zinc-300">
-                          {formatBytes(video.file.size)}
-                        </p>
-                      </div>
-                      <div className="p-6 text-center space-y-1 bg-white/50 dark:bg-zinc-900">
-                        <p className="text-[10px] text-zinc-500 uppercase tracking-widest">
-                          New Size
-                        </p>
-                        <p
-                          className={cn(
-                            "font-mono font-bold text-lg",
-                            result.size > video.file.size
-                              ? "text-red-500"
-                              : "text-emerald-600",
-                          )}
-                        >
-                          {formatBytes(result.size)}
-                        </p>
-                      </div>
-                      <div className="p-6 text-center space-y-1">
-                        <p className="text-[10px] text-zinc-500 uppercase tracking-widest">
-                          Reduction
-                        </p>
-                        <p className="font-mono font-bold text-lg text-zinc-900 dark:text-zinc-100">
-                          {Math.round(
-                            (1 - result.size / video.file.size) * 100,
-                          )}
+                  <div className="space-y-6">
+                    <div className="flex justify-between items-end">
+                      <Label className="uppercase tracking-widest text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                        Compression Level
+                      </Label>
+                      <span className="font-mono text-4xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tighter">
+                        {ratio}
+                        <span className="text-lg text-zinc-400 align-top ml-1">
                           %
-                        </p>
-                      </div>
+                        </span>
+                      </span>
                     </div>
 
-                    {/* Warning if size increased */}
-                    {result.size > video.file.size && (
-                      <Alert
-                        variant="destructive"
-                        className="mx-6 mt-6 rounded-[2px] border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/30"
-                      >
-                        <AlertCircle className="h-4 w-4" />
-                        <AlertTitle className="uppercase tracking-wide font-bold text-xs">
-                          Inefficient Compression
-                        </AlertTitle>
-                        <AlertDescription className="text-xs font-mono mt-1">
-                          Output is larger than input (
-                          {Math.round(
-                            ((result.size - video.file.size) /
-                              video.file.size) *
-                              100,
-                          )}
-                          % increase). Try a lower quality setting.
-                        </AlertDescription>
-                      </Alert>
-                    )}
+                    <Slider
+                      value={[ratio]}
+                      onValueChange={(v) => setRatio(v[0])}
+                      min={1}
+                      max={100}
+                      step={1}
+                      className="py-2 cursor-col-resize"
+                    />
 
-                    {/* Export Actions */}
-                    <div className="p-8 space-y-6">
-                      <div className="space-y-2">
-                        <Label className="uppercase text-[10px] tracking-widest text-zinc-500 font-mono">
-                          Export Filename
-                        </Label>
-                        <div className="flex gap-2">
-                          <Input
-                            value={exportName}
-                            onChange={(e) => setExportName(e.target.value)}
-                            className="font-mono text-sm h-10 border-2 rounded-[2px] focus-visible:ring-0 focus-visible:border-orange-500"
-                          />
-                        </div>
-                      </div>
-                      <div className="flex gap-4 pt-2">
+                    <div className="grid grid-cols-4 gap-2">
+                      {[30, 50, 70, 90].map((p) => (
                         <Button
+                          key={p}
                           variant="outline"
-                          className="flex-1 h-12 uppercase tracking-widest text-xs font-bold rounded-[2px] border-2 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                          onClick={() => {
-                            setCompressionSessionId(null);
-                            clearProgress();
-                            setResult(null);
-                            setElapsedTime(0);
-                            setStatus("ready");
-                          }}
+                          size="sm"
+                          onClick={() => setRatio(p)}
+                          className={cn(
+                            "font-mono text-xs h-9 border-2 rounded-[2px] transition-all",
+                            ratio === p
+                              ? "border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900"
+                              : "border-zinc-200 text-zinc-500 hover:border-zinc-300 hover:text-zinc-900 dark:border-zinc-800 dark:hover:border-zinc-700",
+                          )}
                         >
-                          <RefreshCcw className="mr-2 h-4 w-4" />
-                          Discard
+                          {p}%
                         </Button>
-                        <Button
-                          className="flex-[2] bg-emerald-600 hover:bg-emerald-700 text-white h-12 uppercase tracking-widest text-xs font-bold rounded-[2px] shadow-lg shadow-emerald-900/10 hover:shadow-emerald-600/20 active:translate-y-0.5 transition-all"
-                          onClick={handleDownload}
-                        >
-                          <Download className="mr-2 h-4 w-4" />
-                          Save to Disk
-                        </Button>
-                      </div>
+                      ))}
                     </div>
                   </div>
-                )}
 
-                {/* S3: Error */}
-                {status === "error" && (
-                  <div className="p-6">
-                    <Alert variant="destructive" className="rounded-[2px]">
-                      <AlertCircle className="h-4 w-4" />
-                      <AlertTitle className="uppercase font-bold tracking-wide text-xs">
-                        Processing Failed
+                  {/* Low bitrate warning */}
+                  {isHighlyCompressed(
+                    video.file.size,
+                    video.meta.duration,
+                    video.meta.width,
+                    video.meta.height,
+                  ) && (
+                    <Alert className="rounded-[2px] border-amber-500/50 bg-amber-50 dark:bg-amber-950/10 text-amber-900 dark:text-amber-100">
+                      <Info className="h-4 w-4 text-amber-600" />
+                      <AlertTitle className="font-bold uppercase tracking-wide text-xs mb-1">
+                        Warning: Low Bitrate
                       </AlertTitle>
-                      <AlertDescription className="font-mono text-xs mt-1">
-                        {errorMsg}
+                      <AlertDescription className="text-xs font-mono opacity-90">
+                        Video bitrate is already low (
+                        {Math.round(
+                          calculateBitrate(
+                            video.file.size,
+                            video.meta.duration,
+                          ),
+                        )}{" "}
+                        kbps). Quality loss may occur.
                       </AlertDescription>
                     </Alert>
-                    <div className="mt-6 flex justify-end">
-                      <Button
-                        onClick={() => setStatus("idle")}
-                        variant="outline"
-                        className="uppercase tracking-wider text-xs font-bold"
+                  )}
+
+                  <Separator className="bg-zinc-100 dark:bg-zinc-800" />
+
+                  <Button
+                    onClick={startCompression}
+                    size="lg"
+                    className="w-full bg-orange-600 hover:bg-orange-700 text-white h-14 text-lg font-bold uppercase tracking-widest rounded-[2px] shadow-lg shadow-orange-900/10 hover:shadow-orange-600/20 active:translate-y-0.5 transition-all"
+                  >
+                    Initialize Compression
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </div>
+              )}
+
+              {/* S2: Loading */}
+              {status === "compressing" && (
+                <div className="p-12 flex flex-col items-center justify-center space-y-8 animate-in fade-in">
+                  <div className="w-full space-y-2">
+                    <div className="flex justify-between text-xs uppercase tracking-widest font-mono text-zinc-500">
+                      <span>Processing Status</span>
+                      <span>{formatProgress()}%</span>
+                    </div>
+                    <div className="h-4 w-full bg-zinc-100 dark:bg-zinc-800 rounded-[1px] overflow-hidden relative border border-zinc-200 dark:border-zinc-700">
+                      {/* Progress Bar */}
+                      <div
+                        className="h-full bg-orange-600 transition-all duration-300 ease-out relative"
+                        style={{ width: `${formatProgress()}%` }}
                       >
-                        Select New File
+                        <div className="absolute right-0 top-0 bottom-0 w-[1px] bg-white/50" />
+                      </div>
+                    </div>
+                    <div className="flex justify-between text-xs font-mono text-zinc-400">
+                      <span>Mode: ULTRAFAST</span>
+                      <span>Time: {formatTime(elapsedTime)}</span>
+                    </div>
+                  </div>
+
+                  <div className="text-center space-y-1">
+                    <p className="font-bold uppercase tracking-widest animate-pulse text-zinc-900 dark:text-zinc-100">
+                      Compression in Progress...
+                    </p>
+                    <p className="text-zinc-500 font-mono text-xs">
+                      Please do not close this tab
+                    </p>
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    onClick={cancelCompression}
+                    className="mt-4 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 dark:border-red-900/50 dark:hover:bg-red-900/30 dark:hover:border-red-800 rounded-[2px] uppercase text-xs tracking-widest h-8"
+                  >
+                    Abort Operation
+                  </Button>
+                </div>
+              )}
+
+              {/* S4: Success / Result */}
+              {status === "success" && result && (
+                <div className="animate-in fade-in slide-in-from-bottom-5 p-0">
+                  {/* Header */}
+                  <div className="bg-emerald-50 dark:bg-emerald-950/20 border-b border-emerald-100 dark:border-emerald-900/50 p-4 text-center">
+                    <div className="inline-flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold uppercase tracking-widest text-sm">
+                      <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                      Compression Complete
+                    </div>
+                  </div>
+
+                  {/* Preview Area */}
+                  <div className="aspect-video bg-zinc-950 relative group border-b border-zinc-800">
+                    <video
+                      key={previewMode} // force reload
+                      controls
+                      className="w-full h-full"
+                      src={
+                        previewMode === "original"
+                          ? URL.createObjectURL(video.file)
+                          : result.blobUrl
+                      }
+                    />
+                    {/* Toggle Switch */}
+                    <div className="absolute top-4 right-4 bg-black/80 backdrop-blur-md p-1 rounded-[2px] border border-white/10 flex gap-1 transform transition-transform z-20">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className={cn(
+                          "h-7 text-[10px] uppercase tracking-wide rounded-[1px]",
+                          previewMode === "original"
+                            ? "bg-white text-black"
+                            : "text-zinc-400 hover:text-white",
+                        )}
+                        onClick={() => setPreviewMode("original")}
+                      >
+                        Original
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className={cn(
+                          "h-7 text-[10px] uppercase tracking-wide rounded-[1px]",
+                          previewMode === "compressed"
+                            ? "bg-emerald-500 text-white"
+                            : "text-zinc-400 hover:text-white",
+                        )}
+                        onClick={() => setPreviewMode("compressed")}
+                      >
+                        Result
                       </Button>
                     </div>
                   </div>
-                )}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+
+                  {/* Stats Bar */}
+                  <div className="grid grid-cols-3 divide-x divide-zinc-200 dark:divide-zinc-800 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50">
+                    <div className="p-6 text-center space-y-1">
+                      <p className="text-[10px] text-zinc-500 uppercase tracking-widest">
+                        Original Size
+                      </p>
+                      <p className="font-mono font-medium text-lg text-zinc-700 dark:text-zinc-300">
+                        {formatBytes(video.file.size)}
+                      </p>
+                    </div>
+                    <div className="p-6 text-center space-y-1 bg-white/50 dark:bg-zinc-900">
+                      <p className="text-[10px] text-zinc-500 uppercase tracking-widest">
+                        New Size
+                      </p>
+                      <p
+                        className={cn(
+                          "font-mono font-bold text-lg",
+                          result.size > video.file.size
+                            ? "text-red-500"
+                            : "text-emerald-600",
+                        )}
+                      >
+                        {formatBytes(result.size)}
+                      </p>
+                    </div>
+                    <div className="p-6 text-center space-y-1">
+                      <p className="text-[10px] text-zinc-500 uppercase tracking-widest">
+                        Reduction
+                      </p>
+                      <p className="font-mono font-bold text-lg text-zinc-900 dark:text-zinc-100">
+                        {Math.round((1 - result.size / video.file.size) * 100)}%
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Warning if size increased */}
+                  {result.size > video.file.size && (
+                    <Alert
+                      variant="destructive"
+                      className="mx-6 mt-6 rounded-[2px] border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/30"
+                    >
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertTitle className="uppercase tracking-wide font-bold text-xs">
+                        Inefficient Compression
+                      </AlertTitle>
+                      <AlertDescription className="text-xs font-mono mt-1">
+                        Output is larger than input (
+                        {Math.round(
+                          ((result.size - video.file.size) / video.file.size) *
+                            100,
+                        )}
+                        % increase). Try a lower quality setting.
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+                  {/* Export Actions */}
+                  <div className="p-8 space-y-6">
+                    <div className="space-y-2">
+                      <Label className="uppercase text-[10px] tracking-widest text-zinc-500 font-mono">
+                        Export Filename
+                      </Label>
+                      <div className="flex gap-2">
+                        <Input
+                          value={exportName}
+                          onChange={(e) => setExportName(e.target.value)}
+                          className="font-mono text-sm h-10 border-2 rounded-[2px] focus-visible:ring-0 focus-visible:border-orange-500"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-4 pt-2">
+                      <Button
+                        variant="outline"
+                        className="flex-1 h-12 uppercase tracking-widest text-xs font-bold rounded-[2px] border-2 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                        onClick={() => {
+                          setCompressionSessionId(null);
+                          clearProgress();
+                          setResult(null);
+                          setElapsedTime(0);
+                          setStatus("ready");
+                        }}
+                      >
+                        <RefreshCcw className="mr-2 h-4 w-4" />
+                        Discard
+                      </Button>
+                      <Button
+                        className="flex-[2] bg-emerald-600 hover:bg-emerald-700 text-white h-12 uppercase tracking-widest text-xs font-bold rounded-[2px] shadow-lg shadow-emerald-900/10 hover:shadow-emerald-600/20 active:translate-y-0.5 transition-all"
+                        onClick={handleDownload}
+                      >
+                        <Download className="mr-2 h-4 w-4" />
+                        Save to Disk
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* S3: Error */}
+              {status === "error" && (
+                <div className="p-6">
+                  <Alert variant="destructive" className="rounded-[2px]">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle className="uppercase font-bold tracking-wide text-xs">
+                      Processing Failed
+                    </AlertTitle>
+                    <AlertDescription className="font-mono text-xs mt-1">
+                      {errorMsg}
+                    </AlertDescription>
+                  </Alert>
+                  <div className="mt-6 flex justify-end">
+                    <Button
+                      onClick={() => setStatus("idle")}
+                      variant="outline"
+                      className="uppercase tracking-wider text-xs font-bold"
+                    >
+                      Select New File
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -14,7 +14,30 @@ export default function Home() {
           id="compressor"
           className="w-full py-12 px-4 flex flex-col items-center justify-center gap-6"
         >
-          <VideoCompressor />
+          <div className="min-h-screen w-full bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 font-sans relative overflow-x-hidden selection:bg-orange-500/30">
+            {/* Background Grid */}
+            <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
+
+            <div className="w-full max-w-5xl mx-auto space-y-12 py-12 px-4 relative z-10 animate-in fade-in duration-700 slide-in-from-bottom-4">
+              {/* Header */}
+              <header className="flex flex-col items-center justify-center space-y-3 mb-8">
+                <div className="max-w-xl text-center space-y-3">
+                  <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+                    Compress MP4 Files Instantly
+                  </h1>
+                  <p className="text-lg text-zinc-600 dark:text-zinc-300">
+                    Free online tool to <strong>compress MP4</strong> videos
+                    directly in your browser. Reduce file size without uploading
+                    — 100% <em>offline</em> & private.
+                  </p>
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                    No signup required. Works offline after page loads.
+                  </p>
+                </div>
+              </header>
+              <VideoCompressor />
+            </div>
+          </div>
         </section>
         <Feature />
         <FAQ />
