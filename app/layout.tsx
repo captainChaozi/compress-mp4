@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -47,6 +48,14 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
+        <Script
+          defer
+          data-domain="compressmp4.org"
+          src="https://zz.yfyyu.com/js/script.file-downloads.outbound-links.pageview-props.revenue.tagged-events.js"
+        />
+        <Script id="plausible-init" strategy="afterInteractive">
+          {`window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }`}
+        </Script>
       </body>
     </html>
   );
