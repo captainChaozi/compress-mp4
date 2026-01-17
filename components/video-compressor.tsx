@@ -365,7 +365,7 @@ export default function VideoCompressor() {
       <div className="flex h-[50vh] flex-col items-center justify-center gap-4 text-center">
         <Loader2 className="h-10 w-10 animate-spin text-orange-600" />
         <div className="space-y-1">
-          <h2 className="text-lg font-medium">Initializing engine...</h2>
+          <p className="text-lg font-medium">Initializing engine...</p>
           <p className="text-sm text-zinc-500">
             First load may take a few seconds
           </p>
@@ -394,21 +394,20 @@ export default function VideoCompressor() {
 
       <div className="w-full max-w-5xl mx-auto space-y-12 py-12 px-4 relative z-10 animate-in fade-in duration-700 slide-in-from-bottom-4">
         {/* Header */}
-        <header className="text-center space-y-4">
-          <div className="inline-block border-2 border-zinc-900 dark:border-zinc-50 px-4 py-1 mb-4 rounded-sm rotate-1 hover:rotate-0 transition-transform cursor-default">
-            <span className="font-mono text-xs font-bold uppercase tracking-widest text-zinc-900 dark:text-zinc-50">
-              v1.0.0 // BETA
-            </span>
+        <header className="flex flex-col items-center justify-center space-y-3 mb-8">
+          <div className="max-w-xl text-center space-y-3">
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+              Compress MP4 Files Instantly
+            </h1>
+            <p className="text-lg text-zinc-600 dark:text-zinc-300">
+              Free online tool to <strong>compress MP4</strong> videos directly
+              in your browser. Reduce file size without uploading — 100%{" "}
+              <em>offline</em> & private.
+            </p>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+              No signup required. Works offline after page loads.
+            </p>
           </div>
-          <h1 className="text-5xl md:text-6xl font-extrabold tracking-tighter text-zinc-900 dark:text-zinc-50 font-sans uppercase break-words text-balance">
-            Offline <span className="text-orange-600">MP4</span> Compressor
-          </h1>
-          <p className="text-zinc-500 dark:text-zinc-400 font-medium text-lg max-w-lg mx-auto text-balance">
-            Client-side processing engine. <br />
-            <span className="font-mono text-xs uppercase tracking-widest text-zinc-400 mt-2 block">
-              Secure • Fast • Private
-            </span>
-          </p>
         </header>
 
         {/* Main Card */}
